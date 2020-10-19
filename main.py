@@ -1,6 +1,6 @@
 def przedstawsie(name):
     print('Siema', name)
 
-przestawsie('Grzesiek')
+przedstawsie('Grzesiek')
 przedstawsie('Bartek')
 
