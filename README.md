@@ -1,5 +1,5 @@
-# projektPSI
+# Projekt PSI
 
-Bartosz Jankowski
+# Bartosz Jankowski
 
-Grzegorz Karowiec
+# Grzegorz Karowiec
