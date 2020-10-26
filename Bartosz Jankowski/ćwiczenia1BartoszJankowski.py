@@ -37,11 +37,23 @@ pierwszy = (151246, "Tomek Mróz")
 drugi = (525674, "Jan Polak")
 trzeci = (123124, "Bartosz Kowalski")
 print(pierwszy[1])
+krotka = [pierwszy, drugi, trzeci]
 
-slownik = dict((y, x) for x, y in pierwszy)
-print(slownik)
+
+def zamien(krotka, slownik):
+    slownik = dict(krotka)
+    return slownik
+
+
+dic = {}
+dic1 = zamien(krotka, dic)
+print(dic1)
+dic1.update({'152788': "Adam Roztowiak"})
+print(dic1)
 
 numery = [123123123, 123123123, 123153453, 543787854, 155123153, 123123123]
+print(numery)
+print(list(set(numery)))
 
 for i in range(10):
     print(i)
