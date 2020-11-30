@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Autor(models.Model):
-    idAutora = models.IntegerField(primary_key=True)
+    idAutora = models.AutoField(primary_key=True)
     Imie = models.CharField(max_length=75)
     Nazwisko = models.CharField(max_length=75)
     DataUrodzenia = models.DateTimeField()
@@ -16,47 +16,48 @@ statusdowyboru = (
 
 
 class User(models.Model):
-    idUsera = models.IntegerField(primary_key=True)
+    idUsera = models.AutoField(primary_key=True)
     username = models.CharField(max_length=16)
     password = models.CharField(max_length=32)
-    email = models.CharField(max_length=255)
+    email = models.EmailField(null=True)
+    email2 = models.EmailField(null=True)
     status = models.CharField(max_length=4, choices=statusdowyboru)
 
 
 class Klient(models.Model):
-    idKlienta = models.IntegerField(primary_key=True)
+    idKlienta = models.AutoField(primary_key=True)
     Imie = models.CharField(max_length=45)
     Nazwisko = models.CharField(max_length=45)
     czyUser = models.BooleanField()
 
 
 class Adres(models.Model):
-    idAdresu = models.IntegerField(primary_key=True)
+    idAdresu = models.AutoField(primary_key=True)
     Miasto = models.CharField(max_length=45)
-    Ulica = models.CharField(max_length=45)
+    Ulica = models.CharField(max_length=100)
     KodPocztowy = models.CharField(max_length=45)
     Wojewodztwo = models.CharField(max_length=45)
-    User.idUsera = models.ManyToManyField(User)
-    Klient.idKlienta = models.ManyToManyField(Klient)
+    idUsera = models.ManyToManyField(User)
+    idKlienta = models.ManyToManyField(Klient)
 
 
 class Kategoria(models.Model):
-    idKategorii = models.IntegerField(primary_key=True)
+    idKategorii = models.AutoField(primary_key=True)
     Nazwa = models.CharField(max_length=45)
-    Opis = models.CharField(max_length=155)
+    Opis = models.CharField(max_length=500)
 
 
 class Paragon(models.Model):
-    idParagonu = models.IntegerField(primary_key=True)
-    User.idUsera = models.IntegerField()
-    Klient.idKlienta = models.ForeignKey(Klient, on_delete=models.CASCADE)
+    idParagonu = models.AutoField(primary_key=True)
+    idUsera = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    idKlienta = models.ForeignKey(Klient, on_delete=models.CASCADE, null=True)
     suma = models.FloatField()
 
 
 class Ksiazka(models.Model):
-    idKsiazki = models.IntegerField(primary_key=True)
-    Autor.idAutora = models.ForeignKey(Autor, on_delete=models.CASCADE)
-    Kategoria.idKategorii = models.ForeignKey(Kategoria, on_delete=models.CASCADE)
+    idKsiazki = models.AutoField(primary_key=True)
+    idAutora = models.ForeignKey(Autor, on_delete=models.CASCADE, null=True)
+    idKategorii = models.ForeignKey(Kategoria, on_delete=models.CASCADE, null=True)
     tytul = models.CharField(max_length=150)
     cena_netto = models.FloatField()
     rok_wydania = models.DateTimeField()
