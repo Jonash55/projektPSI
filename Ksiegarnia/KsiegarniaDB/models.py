@@ -20,7 +20,6 @@ class User(models.Model):
     username = models.CharField(max_length=16)
     password = models.CharField(max_length=32)
     email = models.EmailField(null=True)
-    email2 = models.EmailField(null=True)
     status = models.CharField(max_length=4, choices=statusdowyboru)
 
 
@@ -52,6 +51,7 @@ class Paragon(models.Model):
     idUsera = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     idKlienta = models.ForeignKey(Klient, on_delete=models.CASCADE, null=True)
     suma = models.FloatField()
+    dataWystawienia = models.DateTimeField(null=True)
 
 
 class Ksiazka(models.Model):
