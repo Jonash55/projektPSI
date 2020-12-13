@@ -16,13 +16,18 @@ class KsiazkaList(generics.ListCreateAPIView):
     queryset = Ksiazka.objects.all()
     serializer_class = KsiazkaSerializer
     name = 'ksiazka-list'
+    filterset_fields = ['tytul', 'idKategorii', 'rok_wydania', 'idAutora']
+    search_fields = ['tytul', 'idAutora']
+    ordering_fields = ['tytul', 'idAutora', 'idKategorii']
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class KsiazkaDetail(generics.RetrieveDestroyAPIView):
     queryset = Ksiazka.objects.all()
     serializer_class = KsiazkaSerializer
     name = 'ksiazka-detail'
-
 
 # ADRES ====================================================================================
 
@@ -61,12 +66,15 @@ class KlientList(generics.ListCreateAPIView):
     queryset = Klient.objects.all()
     serializer_class = KlientSerializer
     name = 'klient-list'
+    ordering_fields = ['nazwisko']
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class KlientDetail(generics.RetrieveDestroyAPIView):
     queryset = Klient.objects.all()
     serializer_class = KlientSerializer
     name = 'klient-detail'
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # KATEGORIA ====================================================================================
@@ -76,6 +84,9 @@ class KategoriaList(generics.ListCreateAPIView):
     queryset = Kategoria.objects.all()
     serializer_class = KategoriaSerializer
     name = 'kategoria-list'
+    filterset_fields = ['name']
+    search_fields = ['name']
+    ordering_fields = ['name']
 
 
 class KategoriaDetail(generics.RetrieveDestroyAPIView):
@@ -106,12 +117,14 @@ class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     name = 'user-list'
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class UserDetail(generics.RetrieveDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     name = 'user-detail'
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class ApiRoot(generics.GenericAPIView):

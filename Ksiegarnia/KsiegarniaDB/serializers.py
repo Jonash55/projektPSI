@@ -7,11 +7,12 @@ import datetime
 class AutorSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Autor
-        fields = ["idAutora", "url", "Imie", "Nazwisko", "DataUrodzenia", "Opis", "Ksiazka"]
+        fields = ["idAutora", "url", "Imie", "Nazwisko", "DataUrodzenia", "Opis"]
         read_only_fields = ["idAutora"]
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = User
         fields = ["idUsera", "url", "username", "password", "email", "status"]
@@ -26,13 +27,9 @@ class KlientSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AdresSerializer(serializers.HyperlinkedModelSerializer):
-    idUsera = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='user-detail')
-    idKlienta = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='klient-detail')
-    Klient = serializers.SlugRelatedField(queryset=Klient.objects.all(), slug_field='Klient')
-
     class Meta:
         model = Adres
-        fields = ["idAdresu", "url", "Miasto", "Ulica", "KodPocztowy", "Wojewodztwo", "idUsera", "idKlienta", "Klient"]
+        fields = ["idAdresu", "url", "Miasto", "Ulica", "KodPocztowy", "Wojewodztwo", "idUsera", "idKlienta"]
         read_only_fields = ["idAdresu", "idUsera", "idKlienta"]
 
 
@@ -44,12 +41,11 @@ class KategoriaSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ParagonSerializer(serializers.HyperlinkedModelSerializer):
-    idUsera = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='user-detail')
-    idKlienta = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='klient-detail')
+    idUsera = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
+    idKlienta = serializers.HyperlinkedRelatedField(read_only=True, view_name='klient-detail')
 
     class Meta:
         model = Paragon
-
         fields = ["idParagonu", "url", "idUsera", "idKlienta", "suma", "dataWystawienia"]
         read_only_fields = ["idParagonu", "idUsera", "idKlienta"]
 
@@ -66,14 +62,13 @@ class ParagonSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class KsiazkaSerializer(serializers.HyperlinkedModelSerializer):
-    idAutora = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='autor-detail')
-    idKategorii = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='kategoria-detail')
-    kategoria = serializers.SlugRelatedField(queryset=Kategoria.objects.all(), slug_field='kategoria')
+    idAutora = serializers.HyperlinkedRelatedField(read_only=True, view_name='autor-detail')
+    idKategorii = serializers.HyperlinkedRelatedField(read_only=True, view_name='kategoria-detail')
 
     class Meta:
         model = Ksiazka
         fields = ["idKsiazki", "url", "idAutora", "idKategorii", "tytul", "cena_netto", "rok_wydania", "cena_brutto",
-                  "ilosc", "kategoria"]
+                  "ilosc"]
         read_only_fields = ["idKsiazki", "idAutora", "idKategorii"]
 
     def validate_cena_netto(self, value):
