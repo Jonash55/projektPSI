@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from .models import Ksiazka, Adres, User, Autor, Klient, Kategoria, Paragon
 from .serializers import KsiazkaSerializer, AdresSerializer, UserSerializer, AutorSerializer, KlientSerializer,\
     KategoriaSerializer, ParagonSerializer
-
+from django_filters import AllValuesFilter, DateTimeFilter, NumberFilter, FilterSet
 
 # KSIAZKA ====================================================================================
 
@@ -51,6 +51,15 @@ class AutorList(generics.ListCreateAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
     name = 'autor-list'
+
+
+class AutorFilter(FilterSet):
+    from_birthdate = DateTimeFilter(field_name='dataUrodzenia', lookup_expr='gte')
+    to_birthdate = DateTimeFilter(field_name='dataUrodzenia', lookup_expr='lte')
+
+    class Meta:
+        model = Autor
+        fields = ['from_birthdate', 'to_birthdate']
 
 
 class AutorDetail(generics.RetrieveDestroyAPIView):
@@ -102,6 +111,16 @@ class ParagonList(generics.ListCreateAPIView):
     queryset = Paragon.objects.all()
     serializer_class = ParagonSerializer
     name = 'paragon-list'
+
+
+class ParagonFilter(FilterSet):
+    min_price = NumberFilter(field_name='cena_brutto', lookup_expr='gte')
+    max_price = NumberFilter(field_name='cena_brutto', lookup_expr='lte')
+    idKlienta = AllValuesFilter(field_name='idKlienta')
+
+    class Meta:
+        model = Paragon
+        fields = ['min_price', 'max_price', 'idKlienta']
 
 
 class ParagonDetail(generics.RetrieveDestroyAPIView):
