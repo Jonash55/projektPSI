@@ -48,8 +48,8 @@ class KategoriaSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ParagonSerializer(serializers.HyperlinkedModelSerializer):
-    idUsera = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
-    idKlienta = serializers.SlugRelatedField(queryset=Klient.objects.all(), slug_field='Nazwisko')
+    idUsera = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
+    idKlienta = serializers.HyperlinkedRelatedField(read_only=True, view_name='klient-detail')
 
     class Meta:
         model = Paragon

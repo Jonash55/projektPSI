@@ -159,10 +159,7 @@ class ApiRoot(generics.GenericAPIView):
     name = 'Widok ogólny'
 
     def get(self, request, *args, **kwargs):
-        return Response({'Witaj w posortowanym widoku API Księgarni. Pierwsze trzy odnośniki wymagają konta '
-                         'administratora ==== '
-                         
-                         ' Użytkownicy': reverse(UserList.name, request=request),
+        return Response({'Użytkownicy': reverse(UserList.name, request=request),
                          'Klienci': reverse(KlientList.name, request=request),
                          'Adresy': reverse(AdresList.name, request=request),
                          'Kategorie': reverse(KategoriaList.name, request=request),
