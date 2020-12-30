@@ -25,12 +25,18 @@ class User(models.Model):
     email = models.EmailField(null=True)
     status = models.CharField(max_length=4, choices=statusdowyboru)
 
+    class Meta:
+        ordering = ('idUsera',)
+
 
 class Klient(models.Model):
     idKlienta = models.AutoField(primary_key=True)
     Imie = models.CharField(max_length=45)
     Nazwisko = models.CharField(max_length=45)
     czyUser = models.BooleanField()
+
+    class Meta:
+        ordering = ('idKlienta',)
 
     def __str__(self):
         return self.Imie + ' ' + self.Nazwisko
@@ -45,6 +51,9 @@ class Adres(models.Model):
     idUsera = models.ManyToManyField(User, related_name='adres')
     idKlienta = models.ManyToManyField(Klient, related_name='adres')
 
+    class Meta:
+        ordering = ('idAdresu',)
+
     def __str__(self):
         return self.Miasto + ' ' + self.Ulica + ' ' + self.Wojewodztwo
 
@@ -53,6 +62,9 @@ class Kategoria(models.Model):
     idKategorii = models.AutoField(primary_key=True)
     Nazwa = models.CharField(max_length=45)
     Opis = models.CharField(max_length=500)
+
+    class Meta:
+        ordering = ('idKategorii',)
 
     def __str__(self):
         return self.Nazwa + ' ' + self.Opis
@@ -64,6 +76,9 @@ class Paragon(models.Model):
     idKlienta = models.ForeignKey(Klient, related_name='paragon', on_delete=models.SET_NULL, null=True)
     suma = models.FloatField()
     dataWystawienia = models.DateTimeField(null=True)
+
+    class Meta:
+        ordering = ('idParagonu',)
 
     def __str__(self):
         return str(self.suma) + ' ' + str(self.dataWystawienia)
@@ -78,6 +93,9 @@ class Ksiazka(models.Model):
     rok_wydania = models.DateTimeField()
     cena_brutto = models.FloatField()
     ilosc = models.CharField(max_length=45)
+
+    class Meta:
+        ordering = ('idKsiazki',)
 
     def __str__(self):
         return self.tytul + ' ' + str(self.cena_netto) + ' ' + str(self.rok_wydania) + ' ' + str(self.cena_brutto)\

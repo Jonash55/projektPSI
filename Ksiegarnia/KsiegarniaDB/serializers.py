@@ -5,24 +5,29 @@ import datetime
 
 
 class AutorSerializer(serializers.HyperlinkedModelSerializer):
+    ksiazka = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='ksiazka-detail')
+
     class Meta:
         model = Autor
-        fields = ["idAutora", "url", "Imie", "Nazwisko", "DataUrodzenia", "Opis"]
+        fields = ["idAutora", "url", "Imie", "Nazwisko", "DataUrodzenia", "Opis", "ksiazka"]
         read_only_fields = ["idAutora"]
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    paragon = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='paragon-detail')
 
     class Meta:
         model = User
-        fields = ["idUsera", "url", "username", "password", "email", "status"]
+        fields = ["idUsera", "url", "username", "password", "email", "status", 'paragon']
         read_only_fields = ["idUsera"]
 
 
 class KlientSerializer(serializers.HyperlinkedModelSerializer):
+    paragon = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='paragon-detail')
+
     class Meta:
         model = Klient
-        fields = ["idKlienta", "url", "Imie", "Nazwisko", "czyUser"]
+        fields = ["idKlienta", "url", "Imie", "Nazwisko", "czyUser", 'paragon']
         read_only_fields = ["idKlienta"]
 
 
@@ -34,15 +39,17 @@ class AdresSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class KategoriaSerializer(serializers.HyperlinkedModelSerializer):
+    ksiazka = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='ksiazka-detail')
+
     class Meta:
         model = Kategoria
-        fields = ["idKategorii", "url", "Nazwa", "Opis"]
+        fields = ["idKategorii", "url", "Nazwa", "Opis", "ksiazka"]
         read_only_fields = ["idKategorii"]
 
 
 class ParagonSerializer(serializers.HyperlinkedModelSerializer):
-    idUsera = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
-    idKlienta = serializers.HyperlinkedRelatedField(read_only=True, view_name='klient-detail')
+    idUsera = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
+    idKlienta = serializers.SlugRelatedField(queryset=Klient.objects.all(), slug_field='Nazwisko')
 
     class Meta:
         model = Paragon
@@ -62,8 +69,8 @@ class ParagonSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class KsiazkaSerializer(serializers.HyperlinkedModelSerializer):
-    idAutora = serializers.HyperlinkedRelatedField(read_only=True, view_name='autor-detail')
-    idKategorii = serializers.HyperlinkedRelatedField(read_only=True, view_name='kategoria-detail')
+    idAutora = serializers.SlugRelatedField(queryset=Autor.objects.all(), slug_field='Nazwisko')
+    idKategorii = serializers.SlugRelatedField(queryset=Kategoria.objects.all(), slug_field='Nazwa')
 
     class Meta:
         model = Ksiazka

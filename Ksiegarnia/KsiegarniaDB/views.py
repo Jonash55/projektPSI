@@ -19,6 +19,7 @@ class KsiazkaList(generics.ListCreateAPIView):
     filterset_fields = ['tytul', 'idKategorii', 'rok_wydania', 'idAutora']
     search_fields = ['tytul', 'idAutora']
     ordering_fields = ['tytul', 'idAutora', 'idKategorii']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -28,6 +29,7 @@ class KsiazkaDetail(generics.RetrieveDestroyAPIView):
     queryset = Ksiazka.objects.all()
     serializer_class = KsiazkaSerializer
     name = 'ksiazka-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 # ADRES ====================================================================================
 
@@ -36,12 +38,14 @@ class AdresList(generics.ListCreateAPIView):
     queryset = Adres.objects.all()
     serializer_class = AdresSerializer
     name = 'adres-list'
+    permission_classes = [permissions.IsAuthenticated]
 
 
 class AdresDetail(generics.RetrieveDestroyAPIView):
     queryset = Adres.objects.all()
     serializer_class = AdresSerializer
     name = 'adres-detail'
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # AUTOR ====================================================================================
@@ -51,6 +55,7 @@ class AutorList(generics.ListCreateAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
     name = 'autor-list'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class AutorFilter(FilterSet):
@@ -66,7 +71,7 @@ class AutorDetail(generics.RetrieveDestroyAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
     name = 'autor-detail'
-
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 # KLIENT ====================================================================================
 
@@ -96,12 +101,14 @@ class KategoriaList(generics.ListCreateAPIView):
     filterset_fields = ['name']
     search_fields = ['name']
     ordering_fields = ['name']
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class KategoriaDetail(generics.RetrieveDestroyAPIView):
     queryset = Kategoria.objects.all()
     serializer_class = KategoriaSerializer
     name = 'kategoria-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 # PARAGON ====================================================================================
@@ -111,6 +118,7 @@ class ParagonList(generics.ListCreateAPIView):
     queryset = Paragon.objects.all()
     serializer_class = ParagonSerializer
     name = 'paragon-list'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 class ParagonFilter(FilterSet):
@@ -127,6 +135,7 @@ class ParagonDetail(generics.RetrieveDestroyAPIView):
     queryset = Paragon.objects.all()
     serializer_class = ParagonSerializer
     name = 'paragon-detail'
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
 # USER ====================================================================================
@@ -147,14 +156,17 @@ class UserDetail(generics.RetrieveDestroyAPIView):
 
 
 class ApiRoot(generics.GenericAPIView):
-    name = 'api-root'
+    name = 'Widok ogólny'
 
     def get(self, request, *args, **kwargs):
-        return Response({'adresy': reverse(AdresList.name, request=request),
-                         'users': reverse(UserList.name, request=request),
-                         'kategorie': reverse(KategoriaList.name, request=request),
-                         'paragony': reverse(ParagonList.name, request=request),
-                         'ksiazki': reverse(KsiazkaList.name, request=request),
-                         'klienci': reverse(KlientList.name, request=request),
-                         'autorzy': reverse(AutorList.name, request=request)
+        return Response({'Witaj w posortowanym widoku API Księgarni. Pierwsze trzy odnośniki wymagają konta '
+                         'administratora ==== '
+                         
+                         ' Użytkownicy': reverse(UserList.name, request=request),
+                         'Klienci': reverse(KlientList.name, request=request),
+                         'Adresy': reverse(AdresList.name, request=request),
+                         'Kategorie': reverse(KategoriaList.name, request=request),
+                         'Autorzy': reverse(AutorList.name, request=request),
+                         'Ksiazki': reverse(KsiazkaList.name, request=request),
+                         'Paragony': reverse(ParagonList.name, request=request),
                          })
