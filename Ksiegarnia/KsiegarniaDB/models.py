@@ -14,7 +14,8 @@ class Autor(models.Model):
 
 statusdowyboru = (
     ('prac', 'pracownik'),
-    ('kier', 'kierownik')
+    ('kier', 'kierownik'),
+    ('klie', 'klient')
 )
 
 

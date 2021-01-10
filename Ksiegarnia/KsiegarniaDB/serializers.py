@@ -30,6 +30,11 @@ class KlientSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["idKlienta", "url", "Imie", "Nazwisko", "czyUser", 'paragon']
         read_only_fields = ["idKlienta"]
 
+    def update(self, instance, validated_data):
+        instance.Imie = validated_data.get('Imie', instance.Imie)
+        instance.save()
+        return instance
+
 
 class AdresSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

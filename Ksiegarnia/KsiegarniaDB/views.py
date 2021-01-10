@@ -16,9 +16,8 @@ class KsiazkaList(generics.ListCreateAPIView):
     queryset = Ksiazka.objects.all()
     serializer_class = KsiazkaSerializer
     name = 'ksiazka-list'
-    filterset_fields = ['tytul', 'idKategorii', 'rok_wydania', 'idAutora']
-    search_fields = ['tytul', 'idAutora']
-    ordering_fields = ['tytul', 'idAutora', 'idKategorii']
+    search_fields = ['idAutora', 'idKategorii', 'tytul', 'rok_wydania', 'idKsiazki']
+    ordering_fields = ['tytul', 'idAutora', 'idKategorii', 'cena_brutto', 'cena_netto', 'idKsiazki']
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
@@ -38,6 +37,8 @@ class AdresList(generics.ListCreateAPIView):
     queryset = Adres.objects.all()
     serializer_class = AdresSerializer
     name = 'adres-list'
+    ordering_fields = ['Miasto', 'Wojewodztwo']
+    search_fields = ['Miasto', 'Wojewodztwo', 'Ulica', 'KodPocztowy']
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -49,22 +50,23 @@ class AdresDetail(generics.RetrieveDestroyAPIView):
 
 
 # AUTOR ====================================================================================
+class AutorFilter(FilterSet):
+    from_birthdate = DateTimeFilter(field_name='DataUrodzenia', lookup_expr='gte')
+    to_birthdate = DateTimeFilter(field_name='DataUrodzenia', lookup_expr='lte')
+
+    class Meta:
+        model = Autor
+        fields = ['from_birthdate', 'to_birthdate']
 
 
 class AutorList(generics.ListCreateAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
+    filter_class = AutorFilter
     name = 'autor-list'
+    ordering_fields = ['Nazwisko', 'DataUrodzenia']
+    search_fields = ['Imie', 'Nazwisko', 'idAutora', 'ksiazka__tytul']
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-class AutorFilter(FilterSet):
-    from_birthdate = DateTimeFilter(field_name='dataUrodzenia', lookup_expr='gte')
-    to_birthdate = DateTimeFilter(field_name='dataUrodzenia', lookup_expr='lte')
-
-    class Meta:
-        model = Autor
-        fields = ['from_birthdate', 'to_birthdate']
 
 
 class AutorDetail(generics.RetrieveDestroyAPIView):
@@ -80,7 +82,9 @@ class KlientList(generics.ListCreateAPIView):
     queryset = Klient.objects.all()
     serializer_class = KlientSerializer
     name = 'klient-list'
-    ordering_fields = ['nazwisko']
+    ordering_fields = ['Nazwisko', 'idKlienta', 'Jan', 'idAdresu', 'idUsera']
+    filterset_fields = ['czyUser']
+    search_fields = ['Nazwisko', 'Imie', 'idKlienta']
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -91,6 +95,11 @@ class KlientDetail(generics.RetrieveDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
+class UpdateImie(generics.UpdateAPIView):
+    queryset = Klient.objects.all()
+    serializer_class = KlientSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
 # KATEGORIA ====================================================================================
 
 
@@ -98,9 +107,8 @@ class KategoriaList(generics.ListCreateAPIView):
     queryset = Kategoria.objects.all()
     serializer_class = KategoriaSerializer
     name = 'kategoria-list'
-    filterset_fields = ['name']
-    search_fields = ['name']
-    ordering_fields = ['name']
+    search_fields = ['Nazwa', 'ksiazka__tytul']
+    ordering_fields = ['Nazwa', 'ksiazka', 'idKategorii']
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
@@ -112,23 +120,24 @@ class KategoriaDetail(generics.RetrieveDestroyAPIView):
 
 
 # PARAGON ====================================================================================
+class ParagonFilter(FilterSet):
+    min_price = NumberFilter(field_name='suma', lookup_expr='gte')
+    max_price = NumberFilter(field_name='suma', lookup_expr='lte')
+    idKlienta = AllValuesFilter(field_name='idKlienta')
+
+    class Meta:
+        model = Paragon
+        fields = ['min_price', 'max_price', 'idKlienta']
 
 
 class ParagonList(generics.ListCreateAPIView):
     queryset = Paragon.objects.all()
     serializer_class = ParagonSerializer
     name = 'paragon-list'
+    filter_class = ParagonFilter
+    ordering_fields = ['idParagonu', 'idUsera', 'idKlienta', 'suma', 'dataWystawienia']
+    search_fields = ['suma', 'idUsera', 'idKlienta', 'idParagonu']
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-class ParagonFilter(FilterSet):
-    min_price = NumberFilter(field_name='cena_brutto', lookup_expr='gte')
-    max_price = NumberFilter(field_name='cena_brutto', lookup_expr='lte')
-    idKlienta = AllValuesFilter(field_name='idKlienta')
-
-    class Meta:
-        model = Paragon
-        fields = ['min_price', 'max_price', 'idKlienta']
 
 
 class ParagonDetail(generics.RetrieveDestroyAPIView):
@@ -144,6 +153,8 @@ class ParagonDetail(generics.RetrieveDestroyAPIView):
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filterset_fields = ['status']
+    ordering_fields = ['idUsera', 'username', 'Email']
     name = 'user-list'
     permission_classes = [permissions.IsAuthenticated]
 
