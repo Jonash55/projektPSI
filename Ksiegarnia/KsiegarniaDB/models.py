@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.base_user import BaseUserManager
+from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
 
 
 class Autor(models.Model):
@@ -12,29 +15,85 @@ class Autor(models.Model):
         return self.Imie + ' ' + self.Nazwisko + ' ' + str(self.DataUrodzenia)
 
 
-statusdowyboru = (
-    ('prac', 'pracownik'),
-    ('kier', 'kierownik'),
-    ('klie', 'klient')
-)
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, idUsera, password=None):
+        if not email:
+            raise ValueError("User musi mieć email")
+        if not password:
+            raise ValueError("User musi mieć hasło")
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        user.idUsera = idUsera
+        user.set_password(password)
+        user.is_admin = False
+        user.is_staff = False
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, idUsera, password=None):
+        if not email:
+            raise ValueError("SuperUser musi mieć email")
+        if not password:
+            raise ValueError("SuperUser musi mieć hasło")
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        user.idUsera = idUsera
+        user.set_password(password)
+        user.is_admin = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+    def create_stuffuser(self, email, idUsera, password=None):
+        if not email:
+            raise ValueError("StaffUser musi mieć email")
+        if not password:
+            raise ValueError("StaffUser musi mieć hasło")
+        user = self.model(
+            email=self.normalize_email(email)
+        )
+        user.idUsera = idUsera
+        user.set_password(password)
+        user.is_admin = False
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
 
 
-class User(models.Model):
+class User(AbstractBaseUser, PermissionsMixin):
+    ADMIN = 'admin'
+    STAFF = 'staff'
+    STATUS = [
+        (ADMIN, _('Admin user')),
+        (STAFF, _('Staff user')),
+    ]
+    email = models.EmailField(_('email'), unique=True)
     idUsera = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=16)
-    password = models.CharField(max_length=32)
-    email = models.EmailField(null=True)
-    status = models.CharField(max_length=4, choices=statusdowyboru)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = ('idUsera',)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['idUsera']
+
+    objects = CustomUserManager()
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+    def __str__(self):
+        return "{}".format(self.email)
 
 
 class Klient(models.Model):
     idKlienta = models.AutoField(primary_key=True)
     Imie = models.CharField(max_length=45)
     Nazwisko = models.CharField(max_length=45)
-    czyUser = models.BooleanField()
 
     class Meta:
         ordering = ('idKlienta',)

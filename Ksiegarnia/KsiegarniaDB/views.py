@@ -83,7 +83,6 @@ class KlientList(generics.ListCreateAPIView):
     serializer_class = KlientSerializer
     name = 'klient-list'
     ordering_fields = ['Nazwisko', 'idKlienta', 'Jan', 'idAdresu', 'idUsera']
-    filterset_fields = ['czyUser']
     search_fields = ['Nazwisko', 'Imie', 'idKlienta']
     permission_classes = [permissions.IsAuthenticated]
 
@@ -153,9 +152,9 @@ class ParagonDetail(generics.RetrieveDestroyAPIView):
 class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filterset_fields = ['status']
-    ordering_fields = ['idUsera', 'username', 'Email']
+    ordering_fields = ['idUsera', 'Email']
     name = 'user-list'
+    search_fields = ['email']
     permission_classes = [permissions.IsAuthenticated]
 
 

@@ -1,9 +1,11 @@
 from django.conf.urls import url, include
+from django.contrib import admin
 from . import views
 from django.urls import path
 
 urlpatterns = [
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-auth/', include('rest_framework.urls')),
+    path('admin/', admin.site.urls),
     path('adresy/', views.AdresList.as_view(), name=views.AdresList.name),
     path('adresy/<int:pk>/', views.AdresDetail.as_view(), name=views.AdresDetail.name),
     path('ksiazka/', views.KsiazkaList.as_view(), name=views.KsiazkaList.name),
@@ -19,5 +21,4 @@ urlpatterns = [
     path('kategoria/', views.KategoriaList.as_view(), name=views.KategoriaList.name),
     path('kategoria/<int:pk>/', views.KategoriaDetail.as_view(), name=views.KategoriaDetail.name),
     path('', views.ApiRoot.as_view(), name=views.ApiRoot.name),
-
 ]

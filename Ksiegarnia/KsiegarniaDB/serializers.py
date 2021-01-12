@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
 from .models import Autor, User, Ksiazka, Klient, Adres, Kategoria, Paragon
 import datetime
 
@@ -18,7 +17,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ["idUsera", "url", "username", "password", "email", "status", 'paragon']
+        fields = ["idUsera", "url", "email", "password", "is_admin", "is_staff", "is_active", 'paragon']
         read_only_fields = ["idUsera"]
 
 
@@ -27,7 +26,7 @@ class KlientSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Klient
-        fields = ["idKlienta", "url", "Imie", "Nazwisko", "czyUser", 'paragon']
+        fields = ["idKlienta", "url", "Imie", "Nazwisko", 'paragon']
         read_only_fields = ["idKlienta"]
 
     def update(self, instance, validated_data):
