@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Autor, User, Ksiazka, Klient, Adres, Kategoria, Paragon
+from .models import Autor, User, Ksiazka, Adres, Kategoria, Paragon
 import datetime
 
 
@@ -12,34 +12,29 @@ class AutorSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ["idAutora"]
 
 
+class UserAdresSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = Adres
+        fields = ['url', 'Ulica', 'Miasto']
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     paragon = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='paragon-detail')
+    adresy = UserAdresSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ["idUsera", "url", "email", "password", "is_admin", "is_staff", "is_active", 'paragon']
+        fields = ["idUsera", "url", "email", "password", "is_admin", "is_staff", "is_active", 'paragon', 'adresy']
         read_only_fields = ["idUsera"]
 
 
-class KlientSerializer(serializers.HyperlinkedModelSerializer):
-    paragon = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='paragon-detail')
-
-    class Meta:
-        model = Klient
-        fields = ["idKlienta", "url", "Imie", "Nazwisko", 'paragon']
-        read_only_fields = ["idKlienta"]
-
-    def update(self, instance, validated_data):
-        instance.Imie = validated_data.get('Imie', instance.Imie)
-        instance.save()
-        return instance
-
-
 class AdresSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Adres
-        fields = ["idAdresu", "url", "Miasto", "Ulica", "KodPocztowy", "Wojewodztwo", "idUsera", "idKlienta"]
-        read_only_fields = ["idAdresu", "idUsera", "idKlienta"]
+        fields = ["idAdresu", "url", "Miasto", "Ulica", "KodPocztowy", "Wojewodztwo", "idUsera", "owner"]
+        read_only_fields = ["idAdresu", "idUsera"]
 
 
 class KategoriaSerializer(serializers.HyperlinkedModelSerializer):
@@ -53,12 +48,11 @@ class KategoriaSerializer(serializers.HyperlinkedModelSerializer):
 
 class ParagonSerializer(serializers.HyperlinkedModelSerializer):
     idUsera = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
-    idKlienta = serializers.HyperlinkedRelatedField(read_only=True, view_name='klient-detail')
 
     class Meta:
         model = Paragon
-        fields = ["idParagonu", "url", "idUsera", "idKlienta", "suma", "dataWystawienia"]
-        read_only_fields = ["idParagonu", "idUsera", "idKlienta"]
+        fields = ["idParagonu", "url", "idUsera", "suma", "dataWystawienia"]
+        read_only_fields = ["idParagonu", "idUsera"]
 
     def validate_suma(self, value):
         if value < 0:

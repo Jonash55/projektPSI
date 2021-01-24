@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Autor, Ksiazka, Kategoria, Paragon, Klient, Adres
+from .models import User, Autor, Ksiazka, Kategoria, Paragon, Adres
 from .forms import UserChangeForm, UserCreationForm
 from django.contrib.auth.admin import UserAdmin
 # Register your models here.
@@ -32,5 +32,4 @@ admin.site.register(Autor)
 admin.site.register(Ksiazka)
 admin.site.register(Kategoria)
 admin.site.register(Paragon)
-admin.site.register(Klient)
 admin.site.register(Adres)

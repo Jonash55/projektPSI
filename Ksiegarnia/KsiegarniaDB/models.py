@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import PermissionsMixin, AbstractBaseUser
+from django.conf import settings
 
 
 class Autor(models.Model):
@@ -46,7 +47,7 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_stuffuser(self, email, idUsera, password=None):
+    def create_staffuser(self, email, idUsera, password=None):
         if not email:
             raise ValueError("StaffUser musi mieć email")
         if not password:
@@ -90,18 +91,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return "{}".format(self.email)
 
 
-class Klient(models.Model):
-    idKlienta = models.AutoField(primary_key=True)
-    Imie = models.CharField(max_length=45)
-    Nazwisko = models.CharField(max_length=45)
-
-    class Meta:
-        ordering = ('idKlienta',)
-
-    def __str__(self):
-        return self.Imie + ' ' + self.Nazwisko
-
-
 class Adres(models.Model):
     idAdresu = models.AutoField(primary_key=True)
     Miasto = models.CharField(max_length=45)
@@ -109,7 +98,7 @@ class Adres(models.Model):
     KodPocztowy = models.CharField(max_length=45)
     Wojewodztwo = models.CharField(max_length=45)
     idUsera = models.ManyToManyField(User, related_name='adres')
-    idKlienta = models.ManyToManyField(Klient, related_name='adres')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='adresy', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ('idAdresu',)
@@ -133,7 +122,6 @@ class Kategoria(models.Model):
 class Paragon(models.Model):
     idParagonu = models.AutoField(primary_key=True)
     idUsera = models.ForeignKey(User, related_name='paragon', on_delete=models.SET_NULL, null=True)
-    idKlienta = models.ForeignKey(Klient, related_name='paragon', on_delete=models.SET_NULL, null=True)
     suma = models.FloatField()
     dataWystawienia = models.DateTimeField(null=True)
 
